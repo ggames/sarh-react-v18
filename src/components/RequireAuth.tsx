@@ -3,21 +3,24 @@ import { useAppSelector } from "../hooks/store";
 //import { Unauthorized } from "./Unauthorized";
 
 export const RequireAuth = ({ allowedRoles }: { allowedRoles: string[] } ) => {
-
-    const user  = useAppSelector((state) => state.users);
+   
+   // {user, roles, isAuthenticated }
+   
+    const {user, roles, isAuthenticated }  = useAppSelector((state) => state.auth);
 
     console.log("USUARIO ", JSON.stringify(user));
   
     const location = useLocation();
 
-    if(!user){ 
-        return <Navigate to="/login" />      
+    
+    if(!isAuthenticated){ 
+        return <Navigate to="/login"  state={{from: location}} replace/>      
     }
 
     return (
-        user?.roles?.find((role) => allowedRoles?.includes(role)) ? (
+         roles?.find((role) => allowedRoles?.includes(role)) ? (
             <Outlet />
-        ) : user?.roles ? (
+        ) : roles ? (
             <Navigate to="/unauthorized" state={{ from: location }} replace />
         ) : (
             <Navigate to="/login" state={{ from: location }} replace />

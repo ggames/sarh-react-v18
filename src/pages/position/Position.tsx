@@ -1,0 +1,189 @@
+import { useEffect, useState } from "react";
+import { RootState } from "../../features";
+import { useAppDispatch, useAppSelector } from "../../hooks/store";
+
+import { StatusOfPosition } from "../../constants/StatusOfPosition";
+//import { usePointAction } from "../../features/point/usePointAction";
+import { useTransformationAction } from "../../features/transformation/useTransformationAction";
+import { useForm } from "react-hook-form";
+import { addPosition, updatePosition, fetchPositionById } from "../../features/position/positionThunk";
+import { PositionRequestWithId } from "../../models/position";
+import { fetchOrganizationalUnitDto } from "../../features/organization/organizationalThunk";
+import { useNavigate, useParams } from "react-router-dom";
+import { Label } from "../../components/ui/Label";
+import { Select } from "../../components/ui/Select";
+import { format } from "date-fns";
+import { Input } from "../../components/ui/Input";
+import { TableOfPositions } from "./TableOfPositions";
+
+import { OriginPositions } from "./OriginPositions";
+import { fetchPoints } from "../../features/point/pointThunk";
+
+type PositionFields = {
+  id?: number;
+  pointId: number;
+  organizationalId: number;
+  OriginPositions?: number[];
+  pointsAvailable: number;
+  positionStatus: string;
+  resolutionTransformationId?: number;
+};
+
+export const Position = ({ mode }: { mode: "create" | "edit" }) => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
+
+  const { points } = useAppSelector((state: RootState) => state.points);
+  const { transformations } = useAppSelector((state: RootState) => state.transformations);
+  const { organizationalsDto } = useAppSelector((state: RootState) => state.organizationals);
+  const { position } = useAppSelector((state: RootState) => state.positions);
+  //const {} = useAppSelector((state: RootState) => state.positions)
+
+  //const { fetchPoints } = usePointAction();
+  const { fetchTransformations } = useTransformationAction();
+
+  const [originPositionIds, setOriginPositionIds] = useState<number[]>([]);
+
+  const { register, setValue, handleSubmit } = useForm<PositionFields>();
+
+  useEffect(() => {
+    dispatch(fetchPoints());
+    dispatch(fetchTransformations());
+    dispatch(fetchOrganizationalUnitDto());
+
+
+    if (mode === "edit" && id) {
+      dispatch(fetchPositionById({ positionId: Number(id) }));
+    }
+
+  }, [id, mode, dispatch]);
+
+  useEffect(() => {
+    // console.log("EDICION CARGO ", position);
+    if (mode === "edit" && position) {
+
+      setValue("id", position.id);
+      setValue("pointId", position?.pointID?.id);
+      setValue("pointsAvailable", position.pointID.amountPoint);
+      setValue("organizationalId", position.organizationalUnitID.id);
+      setValue("positionStatus", position?.positionStatus ?? "");
+      setValue("resolutionTransformationId", position?.creationResolutionID?.id);
+    }
+
+
+  }, [mode, position, setValue])
+
+  /*  const handleChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+     const { value } = event.target;
+    // const pointSelect = points.find((p) => Number(p.id) === Number(value));
+ 
+   }; */
+
+  const onSubmit = (data: PositionFields) => {
+    const positionRequest: PositionRequestWithId = {
+      id: Number(id),
+      pointId: Number(data.pointId),
+      organizationalId: Number(data.organizationalId),
+      originPositionIds: originPositionIds,
+      positionStatus: data.positionStatus as (typeof StatusOfPosition)["ACTIVO" | "VACANTE_DEFINITIVA" | "VACANTE_TRANSITORIA" | "SUPRIMIDO"],
+      resolutionTransformationId: Number(data.resolutionTransformationId),
+    };
+    console.log("POSITION REQUEST: ", positionRequest);
+    console.log("ORIGEN DE CARGO ", originPositionIds);
+
+    if (mode === "create") {
+      dispatch(addPosition(positionRequest)).then(() => navigate("/cargos/all"));
+    } else {
+      dispatch(updatePosition({ positionId: Number(id), position_request: positionRequest }));
+      navigate("/cargos/all");
+    }   
+  };
+
+  return (
+    <div>
+      <h5 className="p-2 mb-1 text-1xl font-bold text-gray-400 dark:text-white border border-gray-200 bg-[#cddafd] rounded-t-lg">
+        {mode === "create" ? "Nuevo Cargo" : "Editar Cargo"}
+      </h5>
+      <div className="p-6 space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} >
+
+          <div className="grid grid-cols-2 gap-3">
+            {/* Oculto para edit */}
+            {mode === "edit" && <input type="hidden" {...register("id")} />}
+
+            <div>
+              <Label htmlFor="resolutionTransformationId">Transformación</Label>
+              <Select {...register("resolutionTransformationId")} style={{ fontFamily: "monospace", width: "300px" }} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' >
+                <option value="">Seleccionar</option>
+                {transformations.map((t) => (
+                  <option key={t.id} value={t.id}>
+
+                    {`${t.resolutionNumber?.toString().padEnd(10, " ")}|
+                    ${t.date ? format(new Date(t.date), "dd-MM-yyyy") : ""}
+                   ` }
+                  </option>
+                ))}
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="pointId">Tipo de Cargo</Label>
+              <Select {...register("pointId")} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5'>
+                <option value="">Seleccionar</option>
+                {points.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.namePosition}
+                  </option>
+                ))}
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="amountPoint">Cantidad de Puntos</Label>
+              <Input {...register("pointsAvailable")} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' disabled />
+            </div>
+
+            <div>
+              <Label>Estado del Cargo</Label>
+              <Select {...register("positionStatus")} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5'>
+                <option value="">Seleccionar</option>
+                {Object.entries(StatusOfPosition).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="organizationalId">Unidad Org.</Label>
+              <Select {...register("organizationalId")} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5'>
+                <option value="">Seleccionar</option>
+                {organizationalsDto.map((org) => (
+                  <option key={org.id} value={org.id}>
+                    {org.nameUnit}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          </div>
+          {mode !== "edit" ? (<TableOfPositions getSelectedPositions={setOriginPositionIds} shouldReset={false} onResetDone={() => { }} />
+          ) : (position && <OriginPositions originId={Number(id)} />)}
+
+          <div className="mt-10 flex justify-center">
+            <button
+              type="submit"
+              className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow hover:bg-indigo-500"
+            >
+              {mode === "create" ? "Guardar" : "Actualizar"}
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+  );
+}

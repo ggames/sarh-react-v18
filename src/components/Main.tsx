@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom"
 
-    const Main = () => {
+const Main = () => {
   return (
-    <main className="h-[720px]">
-       <section className="h-full bg-grey-200">
-           <Outlet />
-       </section>
+    <main className="flex-1 p-4" >
+
+      <Outlet />
+
     </main>
   )
 }

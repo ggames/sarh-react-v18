@@ -1,25 +1,39 @@
-import { FaAlignJustify } from "react-icons/fa"
+import { RootState } from "../features"
+import { useAppSelector } from "../hooks/store"
 
-import { useAppDispatch } from "../hooks/store";
-import { openSidebar } from "../features/sidebar/sidebarSlice";
+
 
 export const Header = () => {
 
-     const dispatch  = useAppDispatch();
-    
+    const { user } = useAppSelector((state: RootState) => state.auth)
+
+    console.log("EL USUARIO ACTUAL ", user);
+
     return (
-        <header className="h-14 bg-blue-950 flex flex-row justify-between text-white">
-            <div className="w-2/12 flex flex-row justify-center items-center">
-                <button
-                    className="bg-transparent hover:bg-blue-500 font-semibold
-                      hover:text-white py-2 px-4 border border-white hover:border-transparent
-                      rounded active:scale-95 "
-                    onClick={() => dispatch(openSidebar())}
-                >
-                    <FaAlignJustify size={25} />
-                </button>
+        <header >
+           <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-5">
+                <div className="flex items-center justify-between">
+
+            <div className="text-md font-bold">
+                <span className="font-light">Buenos días,
+                </span> {user?.replace(/(^\w{1})|(\s+\w{1})/g, letra => letra.toUpperCase()) || "Invitado"}
             </div>
-            <span className="flex justify-center items-center w-10/12 bg-blue-600">aqui puedes colocar un nav menu</span>
+
+            <div className="p-0 ">
+                <div className="flex items-center">
+                    <img className="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                    <div className="ml-3">
+                        <p className="text-sm font-medium text-white">Tom Cook</p>
+                        <p className="text-xs text-gray-400">View profile</p>
+                    </div>
+                </div>
+            </div>
+
+          </div>
+         </div>
+      
+            
+
         </header>
     )
 }

@@ -1,0 +1,76 @@
+// import axios from "axios";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+//import axiosWithAuth from "../../api/api.axios";
+
+const LOGIN_URL = "http://localhost:8080/auth/log-in";
+
+export interface LoginCredentials {
+  username: string;
+  password: string;
+  remember: boolean;
+}
+
+interface LoginResponse {
+  jwt?: string;
+  token?: string;
+  username?: string;
+  tempToken?: string;
+  roles?: string[];
+  refreshToken?: string;
+  // otros campos del backend si los hubiese
+}
+
+/*type LoginPayload = {
+  token: string;
+  tempToken?: string | null;
+  //remember: boolean;
+  roles: string[];
+  user: string;
+}; */
+
+export const loginUser = createAsyncThunk(
+  "auth/login",
+  async (credentials: LoginCredentials, { rejectWithValue }) => {
+    try {
+      const res = await axios.post<LoginResponse>(
+        LOGIN_URL,
+          {username: credentials.username,
+          password: credentials.password}
+
+      );
+
+      const { jwt: token, tempToken, username, roles, refreshToken } = res.data;
+
+      console.log("DATA LOGIN REFRESH ", res.data.refreshToken);
+      // intentamos varias formas de obtener el token
+      if (!token && !tempToken) {
+        return rejectWithValue("No se recibió token del servidor.");
+      }
+
+      if( token && credentials.remember) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", username || "");
+        if(roles) {
+           localStorage.setItem("roles_token", JSON.stringify(roles ));
+        }
+        
+      }
+
+
+
+      return {
+        token: token ?? "",
+        tempToken: token ?? null,
+        //remember: credentials.remember,
+        refreshToken: refreshToken || "",   
+        roles: roles || [],
+        user: username ?? "",
+      };
+    } catch (err) {
+
+      return rejectWithValue(String(err));
+
+    }
+  }
+);

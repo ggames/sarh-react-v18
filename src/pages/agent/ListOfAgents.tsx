@@ -1,34 +1,29 @@
 
 import { useEffect } from 'react';
 import { useAppSelector } from '../../hooks/store';
+import { fetchAgents } from '../../features/agent';
 //import { useParams } from 'react-router-dom';
-import { useAgentAction } from '../../features/agent/useAgentAction';
+//import { useAgentAction } from '../../features/agent/useAgentAction';
 // 
 // import { useParams } from 'react-router-dom';
 
+import { useAppDispatch } from '../../hooks/store';
+
 export const ListOfAgents = () => {
-    
+    const dispatch = useAppDispatch();
+
     const { agents } = useAppSelector(state => state.agents);
+
     // const params = useParams();
-    const { fetchAgent } = useAgentAction();
+    // const { fetchAgent } = useAgentAction();
 
-    console.log("agents", agents);
+   
     useEffect(() => {
-        const fetchData = async () => {
-            try {
 
-                fetchAgent();
+        dispatch(fetchAgents());
+    
+    }, [dispatch]);
 
-            } catch (error) {
-                if (error instanceof Error) {
-                    console.error("Error fetching agents:", error.message);
-                }
-            }
-        }
-
-        console.log("agents", fetchData());
-        fetchData();
-    }, []);
     return (
         <div className='isolate bg-white px-6 py-12 sm:py-8 lg:px-8' >
             <div aria-hidden="true"
@@ -46,8 +41,8 @@ export const ListOfAgents = () => {
             <div className="mx-auto max-w-2xl text-center">
                 <h2 className="text-4xl font-semibold tracking-tight text-balance text-gray-900 sm:text-5xl">Agentes - Docentes </h2>
             </div>
-            <div className='mx-auto mt-8 max-w-xl sm:mt-8'>
-                <table className='table-auto'>
+            <div className='overflow-x-auto'>
+                <table className='t'>
                     <thead>
                         <tr>
                             <th scope='col' className='px-6 py-3'>Nombre</th>

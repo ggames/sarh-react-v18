@@ -3,7 +3,7 @@
 
 import { Header } from "./Header";
 import Main from "./Main";
-import Footer from "./Footer";
+// import Footer from "./Footer";
 import Sidebar from "./Sidebar/Sidebar";
 
 
@@ -11,12 +11,27 @@ import Sidebar from "./Sidebar/Sidebar";
 const Layout = () => {
 
   return (
-    <div className="w-full lg:w[1024px] m-auto flex flex-col justify-start relative">
+    <div className="flex min-h-screen">
       <Sidebar />
-      <Header />
-      <Main />
-      <Footer />
+      <div className="w-full max-w-1200">
+        <Header />
+        <Main />
+      </div>
+
+
     </div>
+
+
+    /*  <div className= "flex">
+         <Sidebar />
+      
+       <div className="grid grid-cols-1  w-full max-w-1200">
+        <Header />
+        
+         <Main />
+       </div>
+ 
+     </div> */
 
 
 
