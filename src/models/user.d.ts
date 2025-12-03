@@ -1,3 +1,4 @@
+import { Role } from "./roles";
 
 export type UserId = string;
 
@@ -25,4 +26,28 @@ export interface AuthAction {
 
     type: string,
     payload: User
+}
+
+export interface UserRequest {
+    email: string;
+    username: string;
+    profilePicturePath: string;
+    password: string;
+    roles: string[];
+}
+
+export interface UserResponse {
+    id: number;
+    email: string;
+    username: string;
+    profilePicturePath: string;
+    roles: Role[];
+}
+
+export interface UserCreate {
+    id: number;
+    email: string;
+    username: string;
+    profilePicturePath?: string;
+    roles: string[];
 }

@@ -3,7 +3,6 @@
 import { Link } from "react-router-dom";
 import { Spinner } from "../../components/ui/Spinner";
 import { LuFilePen, LuTrash2 } from "react-icons/lu";
-import { Button } from "../../components/ui/Button";
 
 import { FaPlus } from "react-icons/fa";
 import { useAgentInfinite } from "../../hooks/agent/useAgent";
@@ -45,9 +44,10 @@ export const ListOfAgents2 = () => {
                     Información de Agentes
                 </h2>
 
-                <Button className="inline-flex items-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-md px-4 py-2">
+                <Link to={"/agente/create"} className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 py-3 px-6 font-dm text-base font-medium text-white shadow-xl shadow-green-400/75 transition-transform duration-200 ease-in-out hover:scale-[1.02]"
+>
                     Agregar <FaPlus />
-                </Button>
+                </Link>
             </div>
 
             {/* Tabla con scroll infinito */}

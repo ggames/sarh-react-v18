@@ -14,7 +14,7 @@ export const Point = () => {
         percentage: number;
     }
 
-    const {register,handleSubmit } = useForm<PercentageFields>();
+    const { register, handleSubmit } = useForm<PercentageFields>();
 
     const onSubmit = async (data: PercentageFields) => {
         console.log(data);
@@ -24,7 +24,8 @@ export const Point = () => {
     }
 
     return (
-        <div>
+        <div className="container max-w-6xl mx-auto px-4 py-6">
+
             <h1 className="text-2xl font-bold mb-4">Configurar Porcentaje de Paritaria</h1>
             <form onSubmit={handleSubmit(onSubmit)} className="max-w-md">
                 <div className="mb-4">
@@ -47,7 +48,7 @@ export const Point = () => {
                 </button>
             </form>
             <div>
-            <PointsTable />
+                <PointsTable />
             </div>
         </div>
     );

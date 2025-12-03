@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { RootState } from "../../features";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
+import Swal from 'sweetalert2';
+
+import withReactContent from "sweetalert2-react-content";
 
 import { StatusOfPosition } from "../../constants/StatusOfPosition";
 //import { usePointAction } from "../../features/point/usePointAction";
-import { useTransformationAction } from "../../features/transformation/useTransformationAction";
+
 import { useForm } from "react-hook-form";
 import { addPosition, updatePosition, fetchPositionById } from "../../features/position/positionThunk";
 import { PositionRequestWithId } from "../../models/position";
@@ -18,6 +21,8 @@ import { TableOfPositions } from "./TableOfPositions";
 
 import { OriginPositions } from "./OriginPositions";
 import { fetchPoints } from "../../features/point/pointThunk";
+import { fetchTransformations } from "../../features/transformation/transformationThunk";
+
 
 type PositionFields = {
   id?: number;
@@ -30,6 +35,9 @@ type PositionFields = {
 };
 
 export const Position = ({ mode }: { mode: "create" | "edit" }) => {
+
+  const swal = withReactContent(Swal);
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -42,9 +50,10 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
   //const {} = useAppSelector((state: RootState) => state.positions)
 
   //const { fetchPoints } = usePointAction();
-  const { fetchTransformations } = useTransformationAction();
+  //const { fetchTransformations } = ();
 
   const [originPositionIds, setOriginPositionIds] = useState<number[]>([]);
+  const [selectedPoint, setSelectedPoint] = useState(0);
 
   const { register, setValue, handleSubmit } = useForm<PositionFields>();
 
@@ -61,7 +70,7 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
   }, [id, mode, dispatch]);
 
   useEffect(() => {
-    // console.log("EDICION CARGO ", position);
+       console.log("EDICION CARGO ", position);
     if (mode === "edit" && position) {
 
       setValue("id", position.id);
@@ -71,15 +80,16 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
       setValue("positionStatus", position?.positionStatus ?? "");
       setValue("resolutionTransformationId", position?.creationResolutionID?.id);
     }
+    
+   }, [mode, position, setValue])
 
-
-  }, [mode, position, setValue])
-
-  /*  const handleChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
      const { value } = event.target;
-    // const pointSelect = points.find((p) => Number(p.id) === Number(value));
- 
-   }; */
+     const pointSelect = points.find((p) => Number(p.id) === Number(value));
+     console.log("Valor de Puntos " + pointSelect?.amountPoint);
+     setValue('pointsAvailable', pointSelect?.amountPoint? pointSelect.amountPoint: 0);
+     //setSelectedPoint(pointSelect?.amountPoint? pointSelect.amountPoint: 0);
+   }; 
 
   const onSubmit = (data: PositionFields) => {
     const positionRequest: PositionRequestWithId = {
@@ -94,7 +104,18 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
     console.log("ORIGEN DE CARGO ", originPositionIds);
 
     if (mode === "create") {
-      dispatch(addPosition(positionRequest)).then(() => navigate("/cargos/all"));
+      swal.fire({
+          title: <small>'Estas seguro de esto?, Esta acción es irreversible'</small>,
+          showCancelButton: true,
+          confirmButtonText: "Sí",  
+      }).then(
+          async (result) => {
+            if(result.isConfirmed){
+                 dispatch(addPosition(positionRequest)).then(() => navigate("/cargos/all"));
+            }
+          }
+      );
+    
     } else {
       dispatch(updatePosition({ positionId: Number(id), position_request: positionRequest }));
       navigate("/cargos/all");
@@ -115,7 +136,7 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
 
             <div>
               <Label htmlFor="resolutionTransformationId">Transformación</Label>
-              <Select {...register("resolutionTransformationId")} style={{ fontFamily: "monospace", width: "300px" }} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' >
+              <Select {...register("resolutionTransformationId")} style={{ fontFamily: "monospace" }} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' >
                 <option value="">Seleccionar</option>
                 {transformations.map((t) => (
                   <option key={t.id} value={t.id}>
@@ -130,7 +151,7 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
 
             <div>
               <Label htmlFor="pointId">Tipo de Cargo</Label>
-              <Select {...register("pointId")} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5'>
+              <Select {...register("pointId")} onChange={handleChangeSelect}  className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5'>
                 <option value="">Seleccionar</option>
                 {points.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -142,7 +163,7 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
 
             <div>
               <Label htmlFor="amountPoint">Cantidad de Puntos</Label>
-              <Input {...register("pointsAvailable")} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' disabled />
+              <Input {...register('pointsAvailable')}  className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' disabled />
             </div>
 
             <div>

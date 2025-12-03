@@ -1,17 +1,18 @@
 import { Input } from "../../components/ui/Input";
 import { Label } from "../../components/ui/Label";
-import { useTransformationAction } from "../../features/transformation/useTransformationAction";
+//import { useTransformationAction } from "../../features/transformation/useTransformationAction";
 import { useAppDispatch } from "../../hooks/store";
 import { BodyResolutions } from '../../constants/BodyResolutions';
 import { useForm } from "react-hook-form";
 import { SelectYears } from "../../components/ui/SelectYears";
 import { TextArea } from "../../components/ui/TextArea";
 import { Select } from "../../components/ui/Select";
+import { addTransformation } from "../../features/transformation/transformationThunk";
 
 export default function Transformation() {
 
   const dispatch = useAppDispatch();
-  const { addTransformation } = useTransformationAction();
+  // const { addTransformation } = useTransformationAction();
 
   interface TransformationFields {
     id: number;

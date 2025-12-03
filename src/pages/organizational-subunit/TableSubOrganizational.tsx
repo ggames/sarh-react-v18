@@ -1,5 +1,5 @@
 import { FaPlus } from "react-icons/fa";
-import { Button } from "../../components/ui/Button";
+
 import { RootState } from "../../features";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import { useEffect } from "react";
@@ -15,22 +15,28 @@ export const TableSubOrganizational = () => {
     const { suborganizationalDTOs, loading } = useAppSelector((state: RootState) => state.suborganizationals);
 
     useEffect(() => {
-         dispatch(fetchSuborganizationalUnits());
+        dispatch(fetchSuborganizationalUnits());
     }, []);
 
     return (
-        <div >
+        <div className="container max-w-6xl mx-auto px-4 py-6">
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-semibold text-gray-700">
+                    Información de Materia
+                </h2>
 
-            <h5 className="p-2 mb-1 text-1xl font-bold text-gray-400 dark:text-white border border-gray-200 bg-[#cddafd] rounded-t-lg">
-                Información de materias
-            </h5>
-            <div className="flex gap-4 pb-4">
-
-                <Button className="inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#DAA520] hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Agregar  <FaPlus /></Button>
+                <Link to={"/materia/create"} className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 py-3 px-6 font-dm text-base font-medium text-white shadow-xl shadow-green-400/75 transition-transform duration-200 ease-in-out hover:scale-[1.02]"
+                >
+                    Agregar <FaPlus />
+                </Link>
             </div>
-            <div className='p-6 space-y-6'>
-                <table className=" divide-y divide-gray-200">
+
+
+            <div
+                id="scrollableDiv"
+                className="w-full h-[75vh] overflow-y-auto border border-gray-200 rounded-lg shadow-sm"
+            >
+                <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-[#d5d8d3]">
                         <tr>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 capitalize tracking-wider">ID</th>
@@ -65,17 +71,17 @@ export const TableSubOrganizational = () => {
                                         </div>
 
                                     </td>
-                                     <td className="px-6 py-3 whitespace-nowrap">
+                                    <td className="px-6 py-3 whitespace-nowrap">
                                         <div className="text-sm text-gray-500">
-                                            {suborganizational.guaraniCode ?? 'N/A'} 
+                                            {suborganizational.guaraniCode ?? 'N/A'}
                                         </div>
                                     </td>
                                     <td className="px-6 py-3 whitespace-nowrap">
                                         <div className="text-sm text-gray-500">
-                                            {suborganizational.nameUnit} 
+                                            {suborganizational.nameUnit}
                                         </div>
                                     </td>
-                                  
+
 
                                     <td className="p-6 py-4 font-medium text-gray-900 
                     dark:text-white break-words max-w-xs">

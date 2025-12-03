@@ -28,7 +28,7 @@ const SidebarItem = ({ item }: { item: ISidebarItem }) => {
       <>
         <div className={expanded ? 'flex items-center p-3 font-normal rounded-lg hover:bg-sidebar-background cursor-pointer hover:text-sidebar-active justify-between' : ""} 
         onClick={() => setExpanded(!expanded)} >
-          <div className="flex items-center px-2 py-1 space-x-2 rounded-[3px] font-normal hover:font-semibold cursor-pointer hover:outline outline-offset-2 outline-indigo-500" >
+          <div className="flex items-center px-2 py-1 gap-2 rounded-[3px] font-normal hover:font-semibold cursor-pointer hover:outline outline-offset-2 outline-indigo-500" >
             {Icon && <Icon style={{ color: 'gray', fontSize: '24px' }}  size={20} />}
             <p className="text-x1 font-light">{name} </p>
             {items && items.length > 0 && <LuChevronDown size={18} />}
@@ -37,7 +37,7 @@ const SidebarItem = ({ item }: { item: ISidebarItem }) => {
         </div>
         {
           expanded && items && items.length > 0 && (
-            <div className="flex flex-col py-2 space-y-1 font-light ml-10">
+            <div className="flex flex-col py-2 gap-3 font-light mb-10">
               {items.map((item) => (
                 <SidebarItem key={path} item={item} />
               ))

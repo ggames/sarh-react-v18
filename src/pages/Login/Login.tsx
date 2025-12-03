@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { loginUser } from "../../features/user/authThunk";
+import { loadUserSession } from "../../features/user/userThunk";
+
 //import { logout, setToken } from "../../features/user/authSlice";
 
 //import { loginUser, setRoles, setToken, setUser } from "../../features/user/authSlice";
@@ -15,10 +17,6 @@ export function Login() {
     const dispatch = useAppDispatch();
 
     const { accessToken } = useAppSelector((state) => state.auth);
-
-
-
-
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -36,7 +34,10 @@ export function Login() {
         }
     }, [accessToken, from, navigate])
 
+    
+    useEffect(()=> {
 
+    }, [])
   
 
 
@@ -45,8 +46,8 @@ export function Login() {
         e.preventDefault();
         try {
             const result = await dispatch(loginUser({ username, password })).unwrap();
-
-            console.log("Login exitoso:", result);
+            const photo = await dispatch(loadUserSession({username:username}))
+            console.log("Login exitoso:", result, photo);
             navigate(from, { replace: true });
           
 

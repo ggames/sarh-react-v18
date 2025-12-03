@@ -3,6 +3,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosWithAuth from "../../api/api.axios";
 import { Agent } from "../../models/agent";
 import { AgentWithId } from "../../models/agent.d";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+
 
 export const fetchAgents = createAsyncThunk(
   "agent/all",
@@ -21,10 +24,14 @@ export const fetchAgentById = createAsyncThunk<AgentWithId, {agentId: number}, {
   async ({agentId}, { rejectWithValue }) => {
     try {
       const { data } = await axiosWithAuth.get<AgentWithId>(`/agent/${agentId}`);
-      console.log("DATA AGENTE POR ID ", data);
+    
+
       return data;
     } catch (error) {
-      return rejectWithValue(String(error));
+      
+     
+
+      return rejectWithValue("Error inesperado" + String(error));
     }
   }
 );
@@ -53,9 +60,20 @@ export const addAgent = createAsyncThunk<
       "/agent/create",
       agent
     );
+
+    toast.success("El agente se ha generado con exito");
     return data as AgentWithId;
   } catch (error) {
-    return rejectWithValue("Error al crear el agente " + error);
+     if(error instanceof AxiosError && (error.response?.status === 400 && error.response?.data)){
+      const validationErrors = error.response.data as Record<string, string>;
+
+        // Mostrar todos los errores en toast
+        Object.values(validationErrors).forEach((msg: string) => {
+          toast.error(msg);
+        });
+        return rejectWithValue(String(validationErrors));
+      }
+    return rejectWithValue("Error inesperado");
   }
 });
 

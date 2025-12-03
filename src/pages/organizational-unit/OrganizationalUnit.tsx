@@ -13,6 +13,7 @@ import { RootState } from "../../features"
 
 
 
+
 export const OrganizationalUnitFC = ({ mode }: { mode: "edit" | "create" }) => {
 
   interface OrganizationalFields {
@@ -26,7 +27,7 @@ export const OrganizationalUnitFC = ({ mode }: { mode: "edit" | "create" }) => {
 
   const dispatch = useAppDispatch();
 
-  const { organizational } = useAppSelector((state: RootState)=> state.organizationals);
+  const { organizational } = useAppSelector((state: RootState) => state.organizationals);
 
   const { control, watch, register, handleSubmit, setValue } = useForm<OrganizationalFields>();
 
@@ -39,15 +40,16 @@ export const OrganizationalUnitFC = ({ mode }: { mode: "edit" | "create" }) => {
     }
   }, [id, mode, dispatch]);
 
-  useEffect(()=> {
-    if(mode === "edit" && organizational){
+  
+  useEffect(() => {
+    if (mode === "edit" && organizational) {
       setValue("id", organizational.id);
       setValue("nameUnit", organizational.nameUnit);
       setValue("director", organizational?.director);
-      setValue("viceDirector", organizational.viceDirector?? undefined);
+      setValue("viceDirector", organizational.viceDirector ?? undefined);
     }
-    console.log(organizational);      
-   
+    console.log(organizational);
+
   }, [mode, organizational, setValue]);
 
   const organizationSubmit = (data: OrganizationalFields) => {
@@ -73,7 +75,9 @@ export const OrganizationalUnitFC = ({ mode }: { mode: "edit" | "create" }) => {
 
           <div className="mb-4">
             <Label htmlFor="nameUnit">Departamento academico</Label>
-            <Input {...register("nameUnit")} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+            <Input {...register("nameUnit",{
+               required: 'El nombre de departamento es un dato obligatorio'
+            }) } className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-2">
@@ -83,11 +87,7 @@ export const OrganizationalUnitFC = ({ mode }: { mode: "edit" | "create" }) => {
                 control={control}
                 render={({ field: { onChange } }) => (
                   <div className="flex items-center space-x-2">
-                    <div>
-                      <svg fill="#a6a2a2" className="w-5 h-5 text-gray-400 mr-2 flex-shrink-0" width="42px" height="42px" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7.875 4.5a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM0 4.5a4.5 4.5 0 007.05 3.708l3.45 3.463.796-.796-3.41-3.41A4.5 4.5 0 100 4.5z" />
-                      </svg>
-                    </div>
+
                     <AgentAutocomplete onSelect={(a) => onChange(a)} />
 
                   </div>
@@ -121,14 +121,7 @@ export const OrganizationalUnitFC = ({ mode }: { mode: "edit" | "create" }) => {
                 control={control}
                 render={({ field: { onChange } }) => (
                   <div className="flex items-center space-x-2">
-                    <svg
-                      fill="#a6a2a2"
-                      className="w-5 h-5 text-gray-400 flex-shrink-0"
-                      viewBox="0 0 12 12"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M7.875 4.5a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM0 4.5a4.5 4.5 0 007.05 3.708l3.45 3.463.796-.796-3.41-3.41A4.5 4.5 0 100 4.5z" />
-                    </svg>
+
                     <AgentAutocomplete onSelect={(a) => onChange(a)} />
                     <div className="flex-1">
 

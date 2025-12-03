@@ -38,6 +38,7 @@ export const clearTokens = () => {
   localStorage.removeItem("refresh_token");
   localStorage.removeItem("user");
   localStorage.removeItem("roles");
+  localStorage.removeItem("photoUrl");
 };
 
 // Crear instancia base
@@ -115,7 +116,7 @@ axiosWithAuth.interceptors.response.use(
 
         console.log("Token refrescado exitosamente.");
         return axiosWithAuth(originalRequest);
-      } catch (refreshError: any) {
+      } catch (refreshError) {
         console.error("Error en refresh:", refreshError);
         clearTokens();
         reduxStore?.dispatch(logout());

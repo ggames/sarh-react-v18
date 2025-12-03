@@ -21,9 +21,9 @@ export const useAgentInfinite = () => {
    }  =useInfiniteQuery({
     queryKey: ["agents"],
     queryFn: fetchAgents,
-    initialPageParam: 0, // mejor que 0 si tu API empieza en 1
+    initialPageParam: 0,
     getNextPageParam: (lastPage)=> {
-      // lastPage.info.next es string | null según tu interfaz
+   
       const nextPage = lastPage.page.number + 1;
       return nextPage < lastPage.page.totalPages?  nextPage: undefined
     },

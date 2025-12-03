@@ -137,39 +137,39 @@ export const PlantPositionCreate = () => {
 
     return (
         <div>
-             <h5 className="p-2 mb-6 text-1xl font-bold text-gray-400 dark:text-white border border-gray-200 bg-[#cddafd] rounded-t-lg">
-                Planta de cargos 
+            <h5 className="p-2 mb-6 text-1xl font-bold text-gray-400 dark:text-white border border-gray-200 bg-[#cddafd] rounded-t-lg">
+                Planta de cargos
             </h5>
             <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit, onError)} >
-                <Tabs.Root defaultValue="tab1">
-                    <Tabs.TabsList className="flex space-x-5">
-                        <Tabs.Trigger value="tab1" className="py-2 px-4 rounded-md border border-gray-300 focus:outline outline-offset-2 outline-pink-500">Datos Personales</Tabs.Trigger>
-                        <Tabs.Trigger value="tab2" className="py-2 px-4 rounded-md border border-gray-300 focus:outline outline-offset-2 outline-pink-500">Información de Cargo</Tabs.Trigger>
-                        <Tabs.Trigger value="tab3" className="py-2 px-4 rounded-md border border-gray-300 focus:outline outline-offset-2 outline-pink-500">Información de Planta</Tabs.Trigger>
-                    </Tabs.TabsList>
+                <form onSubmit={handleSubmit(onSubmit, onError)} >
+                    <Tabs.Root defaultValue="tab1">
+                        <Tabs.TabsList className="flex space-x-5">
+                            <Tabs.Trigger value="tab1" className="py-2 px-4 rounded-md border border-gray-300 focus:outline outline-offset-2 outline-pink-500">Datos Personales</Tabs.Trigger>
+                            <Tabs.Trigger value="tab2" className="py-2 px-4 rounded-md border border-gray-300 focus:outline outline-offset-2 outline-pink-500">Información de Cargo</Tabs.Trigger>
+                            <Tabs.Trigger value="tab3" className="py-2 px-4 rounded-md border border-gray-300 focus:outline outline-offset-2 outline-pink-500">Información de Planta</Tabs.Trigger>
+                        </Tabs.TabsList>
 
 
-                    <Tabs.Content value="tab1" className="pt-4 h-[400px]">
-                        <PersonalDataTab />
-                    </Tabs.Content>
-                    <Tabs.Content value="tab2" className="pt-4 h-[400px]">
-                        <PositionTab />
+                        <Tabs.Content value="tab1" className="pt-4 h-[400px]">
+                            <PersonalDataTab />
+                        </Tabs.Content>
+                        <Tabs.Content value="tab2" className="pt-4 h-[400px]">
+                            <PositionTab />
 
-                    </Tabs.Content>
-                    <Tabs.Content value="tab3" className="pt-4 h-[400px]">
-                        <PlantDataTab />
-                    </Tabs.Content>
-                </Tabs.Root>
-                <div className="flex justify-center">
+                        </Tabs.Content>
+                        <Tabs.Content value="tab3" className="pt-4 h-[400px]">
+                            <PlantDataTab />
+                        </Tabs.Content>
+                    </Tabs.Root>
+                    <div className="flex justify-center">
 
-                    <Button type="submit" className="px-8">Guardar</Button>
-                </div>
-            </form>
-        </FormProvider>
+                        <Button type="submit" className="px-8">Guardar</Button>
+                    </div>
+                </form>
+            </FormProvider>
         </div>
 
-        
+
     )
 
 }
@@ -204,20 +204,18 @@ const PersonalDataTab = () => {
 
     return (
         <div className="space-y-5">
-            <div>
+            <div className="">
 
                 <Controller
                     name="agent"
                     control={control}
                     render={({ field: { onChange } }) => (
-                        <div className="flex items-center border border-gray-300 rounded-md p-2">
-                            <svg fill="#a6a2a2" className="w-5 h-5 text-gray-400 mr-2 flex-shrink-0" width="42px" height="42px" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M7.875 4.5a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM0 4.5a4.5 4.5 0 007.05 3.708l3.45 3.463.796-.796-3.41-3.41A4.5 4.5 0 100 4.5z" />
-                            </svg>
-                            <div className="flex-1">
-                                <AgentAutocomplete onSelect={(a) => onChange(a)} />
-                            </div>
+
+
+                        <div className="flex-1">
+                            <AgentAutocomplete onSelect={(a) => onChange(a)} />
                         </div>
+
 
                     )}
                 />
@@ -306,7 +304,7 @@ const PositionTab = () => {
     const selectedItem = positions.find((p) => p.id === selectedItemId) || null;
 
     return (
-        <div className="max-h-64 overflow-y-auto overflow-x-auto border border-gray-300 rounded-lg shadow">
+        <div className="container max-w-6xl mx-auto px-4 py-6">
             <table className="min-w-full table-fixed border-collapse">
                 <thead className="bg-gray-200 sticky top-0 z-10">
                     <tr>
@@ -333,7 +331,7 @@ const PositionTab = () => {
                                     <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>{position.id}</td>
                                     <td className='px-6 py-4 font-medium text-gray-900 dark:text-white break-words max-w-xs'>{position.namePosition.toLowerCase()}</td>
                                     <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>{position.positionStatus.toLowerCase()}</td>
-                                    <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>{position.pointsAvailable}</td>
+                                    <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>{Math.floor(position.pointsAvailable * position.amountPoint/ 100)}</td>
                                     <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
                                         <input type="radio" name="selected" checked={selectedItem?.id === position.id}
                                             onChange={() => handleSelectedItem(position)} />
@@ -346,7 +344,7 @@ const PositionTab = () => {
                     }
                 </tbody>
             </table>
-            {positions && <p> No hay datos para cargar </p>}
+            {positions.length < 0 && <p> No hay datos para cargar </p>}
 
             <h2 className="p-2 mb-0 text-1xl font-bold  text-gray-900 dark:text-white border border-gray-200 bg-gray-100">Cargo Seleccionado</h2>
 
@@ -368,7 +366,7 @@ const PositionTab = () => {
                             <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>{selectedItem.id}</td>
                             <td className='px-6 py-4 font-medium text-gray-900 dark:text-white break-words max-w-xs'>{selectedItem.namePosition.toLowerCase()}</td>
                             <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>{selectedItem.positionStatus}</td>
-                            <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>{selectedItem.pointsAvailable}</td>
+                            <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>{Math.floor(selectedItem.pointsAvailable * selectedItem.amountPoint / 100)}</td>
                             <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
                                 <button onClick={() => handleUnselectItem()}>Eliminar</button>
                             </td>

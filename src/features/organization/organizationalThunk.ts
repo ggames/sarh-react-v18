@@ -5,6 +5,8 @@ import {
   OrganizationalUnitDto,
   OrganizationalUnitWithId,
 } from "../../models/organizationalUnit.d";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 export const fetchOrganizationalUnit = createAsyncThunk<
   OrganizationalUnitWithId[],
@@ -77,7 +79,13 @@ export const addOrganizationalUnit = createAsyncThunk<
     );
     return data as OrganizationalUnitWithId;
   } catch (error) {
-    return rejectWithValue("Error al crear el departamento " + error);
+    
+   if(error instanceof AxiosError){
+        const message = error.response?.data.message || "Error al crear la unidad organizativa";
+        toast.error(message);
+        return rejectWithValue(message);
+      }
+      return rejectWithValue("Error inesperado");
   }
 });
 
@@ -93,9 +101,16 @@ export const updateOrganizationaUnit = createAsyncThunk<
         `organizational/updata/${organizationalId}`,
         organizational
       );
+
+      toast.success("La unidad organizativa se actualizo correctamente");
       return data as OrganizationalUnitWithId;
-    } catch (error) {
-      return rejectWithValue("No se ha podido actualizar el Dpto " + error);
+    } catch (error ) {
+      if(error instanceof AxiosError){
+        const message = error.response?.data.message || "Error al actualizar la unidad organizativa";
+        toast.error(message);
+        return rejectWithValue(message);
+      }
+      return rejectWithValue("Error inesperado");
     }
   }
 );

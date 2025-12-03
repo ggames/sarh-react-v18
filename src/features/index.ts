@@ -16,6 +16,8 @@ import plantReportReducer from "./plant-report/plantReportSlice";
 import { subOrganizationalReducer } from "./suborganizational/suborganizationalSlice";
 import  {authReducer}  from "./user";
 import { setStore } from "../api/api.axios";
+import { userReducer } from "./user/userSlice";
+import { roleReducer } from "./role/roleSlice";
 
 
 
@@ -31,7 +33,9 @@ export const store = configureStore({
         transformations: transformationReducer,
         organizationals: organizationalReducer,
         suborganizationals: subOrganizationalReducer,
+        users: userReducer,
         isSideBarOpen: sidebarReducer,
+        role: roleReducer,
     },
    // middleware: (getDefaultMiddleware) =>
    //     getDefaultMiddleware().concat(authMiddleware),

@@ -34,6 +34,8 @@ import { TableOrganizationalUnit } from './pages/organizational-unit/TableOrgani
 import { TableSubOrganizational } from './pages/organizational-subunit/TableSubOrganizational'
 import { OrganizationalSubunit } from './pages/organizational-subunit/OrganizationalSubunit'
 import { Point } from './pages/point/Point'
+import { RegisterForm } from './pages/user/RegisterForm'
+import { ListOfUsers } from './pages/user/ListOfUsers'
 
 
 
@@ -54,6 +56,8 @@ function App() {
           
           <Route element={<RequireAuth allowedRoles={[Roles.ROLE_USER]} />} >
           {/*   <Route path='cargos' element={<Position />} />  */}
+            <Route path='usuarios' element={<ListOfUsers/>} />
+            <Route path='register' element={<RegisterForm/>} />
             <Route path='puntos' element={<Point />} />
             <Route path='cargos/all' element={<ListPositions />} />
             <Route path='agente/create' element={<Agent mode="create" />} />
@@ -70,6 +74,7 @@ function App() {
            
             <Route path='departamento/create' element={<OrganizationalUnitFC mode={"create"}/>} />
             <Route path='materias' element={<TableSubOrganizational/>} /> 
+            <Route path= 'materia/create' element= {<OrganizationalSubunit mode={'create'}/>} />
             <Route path='materia/edit/:id' element={<OrganizationalSubunit mode={"edit"}/>} /> 
 
             <Route path='reporte-plantas' element={<PlantReport />} />

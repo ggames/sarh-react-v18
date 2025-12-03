@@ -6,7 +6,7 @@ import {
 import { GrUserWorker } from "react-icons/gr";
 
 // import { GrBusinessService } from "react-icons/gr";
-import { FaFileInvoiceDollar, FaUsersCog } from "react-icons/fa";
+import { FaFileInvoiceDollar, FaSignOutAlt, FaUsers, FaUsersCog } from "react-icons/fa";
 import { LiaUserClockSolid } from "react-icons/lia";
 
 //import { FaUserClock } from "react-icons/fa6";
@@ -17,6 +17,10 @@ import { VscLibrary } from "react-icons/vsc";
 import { TbReport, TbTransformFilled } from "react-icons/tb";
 
 import SidebarItem from './SidebarItem';
+import { Button } from '../ui/Button';
+import { useAppDispatch } from '../../hooks/store';
+import { logout } from '../../features/user';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 
@@ -33,14 +37,19 @@ interface ISubItem {
 }
 
 const items: ISidebarItem[] =
-  [  
-   
+  [
+
     {
       name: "Dashboard",
       path: "/",
       icon: LuLayoutDashboard,
     },
-     {
+    {
+      name: 'Usuarios',
+      path: "/usuarios",
+      icon: FaUsers
+    },
+    {
       name: "Configuracion Paritaria",
       path: "/puntos",
       icon: FaFileInvoiceDollar
@@ -101,6 +110,21 @@ const items: ISidebarItem[] =
 
 const Sidebar = () => {
 
+  const dispatch = useAppDispatch();
+
+     const navigate = useNavigate();
+
+    const location = useLocation();
+
+    const from = location.state?.from?.pathname || "/";
+
+
+  const handleOutside = () => {
+      console.log("CIERRE");
+       dispatch(logout());
+       navigate(from, { replace: true});
+  }
+
   {/* <div className='flex justify-center'>
           <img className='h-10 w-fit' src='/src/assets/logo_fich.svg' alt="Logo" />
 
@@ -112,12 +136,12 @@ const Sidebar = () => {
         <div className="p-4 border-b border-gray-800">
           <div className="flex items-center justify-between">
             <img src="/src/assets/unl.png" alt="Logo" className="h-16 w-fit" />
-            
+
           </div>
         </div>
 
-          { /* <!-- User Profile --> */  }
-       
+        { /* <!-- User Profile --> */}
+
 
         <nav className='mt-8'>
           {items.map((item, index) => (
@@ -126,6 +150,15 @@ const Sidebar = () => {
 
           }
         </nav>
+          <div className="relative bottom-1 flex justify-center mb-4">
+    <Button
+      onClick={() => handleOutside()}
+      className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 py-3 px-6 font-dm text-base font-medium text-white shadow-xl shadow-green-400/75 transition-transform duration-200 ease-in-out hover:scale-[1.02]"
+    >
+      <FaSignOutAlt />
+      Salir
+    </Button>
+  </div>
       </aside>
     </>
 

@@ -36,6 +36,8 @@ export const TableOfPositions = ({ getSelectedPositions, shouldReset, onResetDon
       setSelectedItems([]);
       onResetDone();
     }
+
+    console.log("VACANTE DISPONIBLE " + positions);
   }, [shouldReset, onResetDone]);
 
 
@@ -110,7 +112,7 @@ export const TableOfPositions = ({ getSelectedPositions, shouldReset, onResetDon
                     <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>{position.id}</td>
                     <td className='px-6 py-4 font-medium text-gray-900 dark:text-white break-words max-w-xs'>{position.namePosition}</td>
                     <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>{position.positionStatus}</td>
-                    <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>{Math.floor(position.pointsAvailable * position.amountPoint / 100)}</td>
+                    <td className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>{position.pointsAvailable} </td>
 
                   </tr>
                 )

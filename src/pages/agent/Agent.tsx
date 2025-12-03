@@ -3,7 +3,7 @@ import { DocumentType } from '../../constants/DocumentType';
 
 
 //import { format } from 'date-fns';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 // import { useAppSelector } from '../../hooks/store';
 // import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
@@ -15,10 +15,12 @@ import { Label } from '../../components/ui/Label';
 import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { format } from 'date-fns';
-import { toast } from "react-toastify";
+//import { toast } from "react-toastify";
 //import { set } from 'date-fns';
 import { addAgent, fetchAgentById, updateAgent } from '../../features/agent/agentThunk';
 import { AgentWithId } from '../../models/agent';
+import { toast } from 'react-toastify';
+
 
 
 
@@ -28,6 +30,8 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
     const { agent } = useAppSelector((state: RootState) => state.agents);
 
     const dispatch = useAppDispatch();
+
+    const navigate = useNavigate();
 
     type AgentFields = {
         id: number;
@@ -44,11 +48,11 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
         phone?: string;
     }
 
-    const { register, setValue, handleSubmit } = useForm<AgentFields>()
+    const { register, setValue, handleSubmit, setError, formState: { errors } } = useForm<AgentFields>()
 
     // const { updateAgent, fetchAgentById } = useAgentAction();
 
-
+    //const leavingdate = watch('leavingdate');
 
 
     useEffect(() => {
@@ -90,9 +94,45 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
     }, [mode, agent, setValue])
 
 
+    const validateDate = (value: string) => {
+        const isDateValid = !isNaN(new Date(value).getTime());
+        return isDateValid || 'Fecha invalida';
+    }
+
+    const validateDateNotAfterToday = (value: string) => {
+        const today = new Date();
+        const selectedDate = new Date(value);
+        if (selectedDate > today) {
+            return 'La fecha no puede ser mayor a la actual';
+        }
+        return true;
+    }
+
+    const validateDateLeaving = (data: AgentFields) => {
+        //const errors = {};
+        const startDate = new Date(data.birthdate);
+        const endDate = new Date(data.leavingdate || '');
 
 
 
+
+        if (data.leavingdate && endDate < startDate) {
+            setError('leavingdate', { message: 'La fecha de salida no puede ser anterior al nacimiento' });
+        }
+
+        return errors;
+    }
+
+    const validateEmail = (value: string | undefined) => {
+        const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+        if (!value) {
+            return 'El correo electronico es obligatorio';
+        }
+        if (!emailRegex.test(value)) {
+            return 'El correo electronico tiene un formato invalido';
+        }
+        return true;
+    }
 
 
     const onSubmit = (data: AgentFields) => {
@@ -100,6 +140,8 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
         console.log("Agente para editar ", data);
         const leavingdateString = data.leavingdate?.toString() as string;
         const birthdateString = data.birthdate?.toString() as string;
+
+        validateDateLeaving(data);
 
         const agentRequest: AgentWithId = {
             id: data.id,
@@ -116,23 +158,32 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
             email: data.email
         };
         if (mode === "edit") {
-            dispatch(updateAgent({ agentId: data.id, agent: data })).unwrap().then(
-                () => {
-                    toast.success("Agente actualizado correctamente ");
-                }
-            ).catch(
-                () => {
-                    toast.error("Error al actualizar el agente ");
-                })
+
+            try {
+                dispatch(updateAgent({ agentId: data.id, agent: data })).unwrap();
+
+                navigate('/agentes/all');
+
+            } catch (error) {
+                if (error instanceof Error)
+                    toast.error(error?.message);
+
+            }
+
         } else {
-            dispatch(addAgent(agentRequest)).unwrap().then(
-                () => {
-                    toast.success("Agente creado correctamente ");
-                }
-            ).catch(
-                () => {
-                    toast.error("Error al crear el agente ");
-                });
+
+            try {
+                dispatch(addAgent(agentRequest)).unwrap();
+
+               // navigate('/agentes/all');
+
+            } catch (error) {
+                if (error instanceof Error)
+                    toast.error(error?.message);
+
+            }
+
+
         }
 
 
@@ -153,12 +204,22 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
                     <div className="grid grid-cols-6 gap-6 sm:grid-cols-6">
                         <div className='col-span-6 sm:col-span-3'>
                             <Label htmlFor='firstname'>Nombre</Label>
-                            <Input {...register('firstname')} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                            <Input {...register('firstname', {
+                                required: "El nombre del agente es obligatorio"
+                            })} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
 
+                            {errors.firstname && <p style={{ color: "red" }}>{errors.firstname.message}</p>
+                            }
                         </div>
                         <div className="col-span-6 sm:col-span-3">
                             <Label htmlFor='lastnane'>Apellido</Label>
-                            <Input {...register('lastname')} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                            <Input {...register('lastname', {
+                                minLength: { value: 2, message: "El apellido debe tener al menos 2 caracteres" },
+                                required: "El apellido del agente es obligatorio",
+
+                            })} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+
+                            {errors.lastname && <p style={{ color: "red" }}>{errors.lastname.message}</p>}
                         </div>
 
                         <div className='col-span-6 grid grid-cols-4 gap-6'>
@@ -166,7 +227,7 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
 
                             <div>
                                 <Label htmlFor='documenttype'  >Tipo Doc.</Label>
-                                <Select {...register('documenttype')} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5'
+                                <Select {...register('documenttype', { required: "El tipo de documento es obligatorio" })} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5'
                                 >
                                     {
                                         DocumentType.map((doc, key) => (
@@ -176,18 +237,24 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
                                         ))
                                     }
                                 </Select>
+                                {errors.documenttype && <p style={{ color: "red" }}>{errors.documenttype.message}</p>}
                             </div>
 
 
                             <div>
                                 <Label htmlFor='document'>Documento</Label>
-                                <Input {...register('document')} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
-
+                                <Input {...register('document', { required: "El documento es un dato obligatorio" })} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                                {errors.document && <p style={{ color: "red" }}>{errors.document.message}</p>}
                             </div>
                             <div>
                                 <Label htmlFor='birthdate'>Fecha de Nacimiento</Label>
-                                <Input type='date' {...register('birthdate')} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                                <Input type='date' {...register('birthdate', {
+                                    required: 'La fecha de nacimiento es obligatorio',
+                                    validate: { validateDate, validateDateNotAfterToday }
+                                })
 
+                                } className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                                {errors.birthdate && <p style={{ color: "red" }}>{errors.birthdate.message}</p>}
 
                             </div>
                             <div>
@@ -202,9 +269,11 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
                         <div className='col-span-6 sm:col-span-3'>
                             <Label htmlFor='email'>Email</Label>
 
-                            <Input type='email' {...register('email')} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                            <Input type='email' {...register('email', {
+                                validate: validateEmail
+                            })} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
 
-
+                            {errors.email && <p style={{ color: 'red' }} >{errors.email.message}</p>}
                         </div>
 
                         <div className='col-span-6 sm:col-span-3'>
@@ -228,7 +297,7 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
 
 
                             <Input type='date' {...register('leavingdate')} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
-
+                            {errors.leavingdate && <p style={{ color: 'red' }}>{errors.leavingdate.message}</p>}
 
                         </div>
 

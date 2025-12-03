@@ -105,9 +105,16 @@ export const addPosition = createAsyncThunk<
       "position/create",
       position
     );
+    
+    toast.success("Cargo se ha creado con éxito");
     return data as PositionWithId;
   } catch (error) {
-    return rejectWithValue(String(error));
+       if(error instanceof AxiosError) {
+         const message = error.response?.data.message || "Error al actualizar el cargo";  
+         toast.error(message);
+         return rejectWithValue(message);                 
+      }
+      return rejectWithValue("Error inesperado");
   }
 });
 
