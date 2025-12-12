@@ -98,7 +98,7 @@ export const updateOrganizationaUnit = createAsyncThunk<
   async ({ organizationalId, organizational }, { rejectWithValue }) => {
     try {
       const { data } = await axiosWithAuth.put(
-        `organizational/updata/${organizationalId}`,
+        `organizational/update/${organizationalId}`,
         organizational
       );
 

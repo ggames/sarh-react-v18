@@ -2,11 +2,13 @@ import { CharacterPlant } from "../constants/CharacterPlant";
 import { PlantStatus } from "../constants/PlantStatus";
 //import { PlantStatus } from "../constants/PlantStatus";
 import { AgentWithId } from "./agent";
+import { OrganizationalSubUnitWithId } from "./organizationalSubUnit";
 import { PositionWithId } from "./position";
 
 export interface PlantPosition {
   position: PositionWithId;
   agent: AgentWithId;
+  organizationalSubUnit:OrganizationalSubUnitWithId;
   characterplantID: (typeof CharacterPlant)[number];
   currentStatusID: (typeof PlantStatus)[number];
 }
@@ -19,6 +21,7 @@ export interface PlantPositionRequest {
   id: number;
   positionId: number;
   agentId: number;
+  organizationalSubUnit: number;
   characterplantID: string | undefined;
   currentStatusID: string | undefined;
   dateFrom: string;

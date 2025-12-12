@@ -18,6 +18,7 @@ import { PlantStatus } from "../../constants/PlantStatus";
 import { fetchPlantsOfPositionById, updatePlantPosition } from "../../features/plant/plantPositionThunk";
 import { PlantPositionRequest } from "../../models/plant-position";
 import { fetchPlantHistoryLast, fetchPlantHistoryList } from "../../features/planthistory/PlantHistoryThunk";
+import { DocumentType } from "../../constants/DocumentType";
 
 
 
@@ -25,6 +26,7 @@ interface PlantEditableFields {
   id: number,
   positionId: number,
   agentId: number,
+  organizationalSubUnitId?: number,
   characterPlantID?: (typeof CharacterPlant),
   currentStatusID?: (typeof StatusOfPosition),
   dateFrom?: string | undefined,
@@ -40,6 +42,8 @@ export const PlantPositionUpdate = () => {
 
   const dispatch = useAppDispatch();
   const { plant } = useAppSelector((state: RootState) => state.plants);
+  
+  
   const { plantHistories, plantHistory } = useAppSelector((state: RootState) => state.planthistory);
 
   const { register, reset, handleSubmit } = useForm<PlantEditableFields>();
@@ -64,6 +68,10 @@ export const PlantPositionUpdate = () => {
   }, [id, dispatch]);
 
   useEffect(() => {
+
+  },[]);
+
+  useEffect(() => {
      
     if(!plant) return;
 
@@ -73,6 +81,7 @@ export const PlantPositionUpdate = () => {
           id: plant.id,
           positionId: plant.position.id,
           agentId: plant.agent.id,
+          organizationalSubUnitId: plant.organizationalSubUnit.id,
           characterPlantID: plant.characterplantID,
           currentStatusID: plantHistory.plantStatus,
           dateFrom: plantHistory.dateFrom,
@@ -86,6 +95,7 @@ export const PlantPositionUpdate = () => {
         {
           positionId: plant.position.id,
           agentId: plant.agent.id,
+          organizationalSubUnitId: plant.organizationalSubUnit.id,
           characterPlantID: plant.characterplantID,
           currentStatusID: plant.currentStatusID,
           id: 0,
@@ -106,6 +116,7 @@ export const PlantPositionUpdate = () => {
     const updatePlant: PlantPositionRequest  = {
       positionId: data.positionId,
       agentId: data.agentId,
+      organizationalSubUnit: plant?.organizationalSubUnit.id || 0,
       characterplantID: typeof data.characterPlantID === "string" ? data.characterPlantID : "" ,
       currentStatusID: typeof data.currentStatusID === "string" ? data.currentStatusID : "",
       dateFrom: data.dateFrom ?? '',
@@ -126,104 +137,150 @@ export const PlantPositionUpdate = () => {
   }
 
   return (
-    <div className='mx-auto max-w-2xl sm:mt-6 border border-gray-200 bg-white p-2 shadow-sm dark:border-gray-700 dark:bg-gray-800'>
-
-
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-        <h5 className="p-2 mb-0 text-1xl font-bold  text-gray-900 dark:text-white border border-gray-200 bg-gray-100">Información Personal</h5>
-        <div className="flex flex-wrap justify-evenly">
-          <div className="w-1/2 p-2">
+    <div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <h5 className="p-2 mb-0 text-1xl font-bold  text-gray-900 dark:text-white border border-gray-200 bg-gray-100">
+          Información Personal
+        </h5>
+        <div className="grid grid-cols-4 mb-3 gap-4">
+          <div>
             <Label htmlFor="firstname">Nombre</Label>
-            <Input value={plant?.agent.firstname}
+            <Input value={plant?.agent.firstname} readOnly disabled />
+          </div>
+          <div>
+            <Label htmlFor="lastname">Apellido</Label>
+            <Input value={plant?.agent.lastname} readOnly disabled />
+          </div>
+          <div>
+            <Label htmlFor="documenttype">Tipo Doc.</Label>
+            <Select value={plant?.agent.documenttype} disabled>
+              {Object.entries(DocumentType).map(([key, docType]) => (
+                <option key={key} value={key}>
+                  {docType}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="document">Documento</Label>
+            <Input value={plant?.agent.document} readOnly />
+          </div>
+        </div>
+        <h5 className="p-2 mb-0 text-1xl font-bold  text-gray-900 dark:text-white border border-gray-200 bg-gray-100">
+          Información de Cargo.
+        </h5>
+
+        <div className="grid grid-cols-3 mb-3 gap-4">
+          <div>
+            <Label htmlFor="positionCode">Cod. Cargo</Label>
+            <Input
+              value={plant?.position.pointID.positionCode}
               readOnly
+              className="outline-green-600"
             />
-
           </div>
-          <div className="w-1/2 p-2">
-            <label htmlFor="lastname">Apellido</label>
-            <input value={plant?.agent.lastname} readOnly className="block w-full rounded-md bg-white py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" />
+          <div>
+            <Label htmlFor="namePosition">Tipo Cargo</Label>
+            <Input
+              value={plant?.position.pointID.namePosition}
+              readOnly
+              className="outline-green-600"
+            />
           </div>
-          <div className="w-1/2 p-2">
-            <label htmlFor="documenttype">Tipo Doc.</label>
-            <input value={plant?.agent.lastname} readOnly className="block w-full rounded-md bg-white py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" />
+          <div>
+            <Label htmlFor="pointsAvailable">Ptos Disponibles.</Label>
+            <Input
+              value={Math.floor(
+                ((plant?.position?.pointsAvailable ?? 0) *
+                  (plant?.position?.pointID?.amountPoint ?? 0)) /
+                  100
+              )}
+              readOnly
+              className="outline-green-600"
+            />
           </div>
-          <div className="w-1/2 p-2">
-            <label htmlFor="lastname">Documento</label>
-            <input value={plant?.agent.lastname} readOnly className="block w-full rounded-md bg-white py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" />
+          <div>
+            <Label htmlFor="characterplantID">Caracter Cargo</Label>
+            <Input
+              value={plant?.characterplantID}
+              readOnly
+              className="outline-green-600"
+            />
+          </div>
+          <div>
+            <Label htmlFor="currentStatusID">Estado Actual</Label>
+            <Input
+              value={plant?.currentStatusID}
+              readOnly
+              className="outline-green-600"
+            />
+          </div>
+          <div>
+            <Label htmlFor="nameUnit">Unidad Org.</Label>
+            <Input
+              value={plant?.position.organizationalUnitID.nameUnit}
+              readOnly
+              className="outline-green-600"
+            />
           </div>
         </div>
-        <h5 className="p-2 mb-0 text-1xl font-bold  text-gray-900 dark:text-white border border-gray-200 bg-gray-100">Datos de Cargo.</h5>
+        <h5 className="p-2 mb-0 text-1xl font-bold  text-gray-900 dark:text-white border border-gray-200 bg-gray-100">
+          Información de Planta.
+        </h5>
 
-        <div className="flex flex-wrap justify-evenly">
-          <div className="w-1/2 p-2">
-            <label htmlFor="positionCode">Cod. Cargo</label>
-            <input value={plant?.position.pointID.positionCode} readOnly className="block w-full rounded-md bg-white py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-indigo-600" />
-
-          </div>
-          <div className="w-1/2 p-2">
-            <label htmlFor="namePosition">Tipo Cargo</label>
-            <input value={plant?.position.pointID.namePosition} readOnly className="block w-full rounded-md bg-white py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" />
-          </div>
-          <div className="w-1/2 p-2">
-            <label htmlFor="pointsAvailable">Ptos Disponibles.</label>
-            <input value={plant?.position.pointsAvailable} readOnly className="block w-full rounded-md bg-white py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" />
-          </div>
-          <div className="w-1/2 p-2">
-            <label htmlFor="characterplantID">Caracter Cargo</label>
-            <input value={plant?.characterplantID} readOnly className="block w-full rounded-md bg-white py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" />
-          </div>
-          <div className="w-1/2 p-2">
-            <label htmlFor="currentStatusID">Estado Actual</label>
-            <input value={plant?.currentStatusID} readOnly className="block w-full rounded-md bg-white py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" />
-          </div>
-          <div className="w-1/2 p-2">
-            <label htmlFor="nameUnit">Unidad Org.</label>
-            <input value={plant?.position.organizationalUnitID.nameUnit} readOnly className="block w-full rounded-md bg-white py-2 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" />
-          </div>
-        </div>
-        <h5 className="p-2 mb-0 text-1xl font-bold  text-gray-900 dark:text-white border border-gray-200 bg-gray-100">Datos de Planta.</h5>
-
-        <div className="py-2 flex flex-wrap justify-evenly">
-          <div className="w-1/2 p-2">
+        <div className="grid grid-cols-3 mb-3 gap-4">
+          <div>
             <Label htmlFor="dateFrom">Fecha Desde</Label>
-            <Input type="date" {...register('dateFrom')} />
+            <Input
+              type="date"
+              {...register("dateFrom")}
+              className="outline-green-600"
+            />
           </div>
-          <div className="w-1/2 p-2">
+          <div>
             <Label htmlFor="dateTo">Fecha Hasta</Label>
-            <Input type="date" {...register('dateTo')} />
+            <Input
+              type="date"
+              {...register("dateTo")}
+              className="outline-green-600"
+            />
           </div>
-          <div className="w-2/2 p-2">
+          <div>
             <Label htmlFor="movementForReason">Estado Planta</Label>
-            <Select {...register('currentStatusID')}>
+            <Select
+              {...register("currentStatusID")}
+              className="outline-green-600"
+            >
               {Object.entries(PlantStatus).map(([key, plantState]) => (
                 <option key={key} value={key}>
                   {plantState}
                 </option>
               ))}
-
             </Select>
           </div>
         </div>
-        <Button onSubmit={() => onSubmit} className="hover:shadow-form rounded-md bg-[#6A64F1] py-3 px-8 text-base font-semibold text-white outline-none"> Modificar</Button>
+        <Button
+          onSubmit={() => onSubmit}
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+        >
+          {" "}
+          Modificar
+        </Button>
 
-        <div>
-
-        </div>
+        <div></div>
         <div className="p-2">
           <Table
             columns={[
               { key: "plantStatus", header: "Estado Actual" },
               { key: "dateFrom", header: "Fecha Desde" },
-              { key: "dateTo", header: "Fecha Hasta" }
+              { key: "dateTo", header: "Fecha Hasta" },
             ]}
             data={plantHistories}
             className="table-auto"
           />
         </div>
-
       </form>
     </div>
-
-  )
+  );
 }
 

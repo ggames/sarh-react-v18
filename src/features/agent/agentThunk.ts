@@ -61,7 +61,7 @@ export const addAgent = createAsyncThunk<
       agent
     );
 
-    toast.success("El agente se ha generado con exito");
+    toast.success("El agente se ha creado con exito");
     return data as AgentWithId;
   } catch (error) {
      if(error instanceof AxiosError && (error.response?.status === 400 && error.response?.data)){

@@ -71,7 +71,7 @@ const items: ISidebarItem[] =
     },
     {
       name: "Transformación",
-      path: "/transformacion",
+      path: "/transformaciones",
       icon: TbTransformFilled
     },
     {

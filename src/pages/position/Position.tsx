@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { RootState } from "../../features";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 import withReactContent from "sweetalert2-react-content";
 
@@ -9,7 +9,11 @@ import { StatusOfPosition } from "../../constants/StatusOfPosition";
 //import { usePointAction } from "../../features/point/usePointAction";
 
 import { useForm } from "react-hook-form";
-import { addPosition, updatePosition, fetchPositionById } from "../../features/position/positionThunk";
+import {
+  addPosition,
+  updatePosition,
+  fetchPositionById,
+} from "../../features/position/positionThunk";
 import { PositionRequestWithId } from "../../models/position";
 import { fetchOrganizationalUnitDto } from "../../features/organization/organizationalThunk";
 import { useNavigate, useParams } from "react-router-dom";
@@ -23,7 +27,6 @@ import { OriginPositions } from "./OriginPositions";
 import { fetchPoints } from "../../features/point/pointThunk";
 import { fetchTransformations } from "../../features/transformation/transformationThunk";
 
-
 type PositionFields = {
   id?: number;
   pointId: number;
@@ -35,17 +38,19 @@ type PositionFields = {
 };
 
 export const Position = ({ mode }: { mode: "create" | "edit" }) => {
-
   const swal = withReactContent(Swal);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
-
   const { points } = useAppSelector((state: RootState) => state.points);
-  const { transformations } = useAppSelector((state: RootState) => state.transformations);
-  const { organizationalsDto } = useAppSelector((state: RootState) => state.organizationals);
+  const { transformations } = useAppSelector(
+    (state: RootState) => state.transformations
+  );
+  const { organizationalsDto } = useAppSelector(
+    (state: RootState) => state.organizationals
+  );
   const { position } = useAppSelector((state: RootState) => state.positions);
   //const {} = useAppSelector((state: RootState) => state.positions)
 
@@ -53,7 +58,7 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
   //const { fetchTransformations } = ();
 
   const [originPositionIds, setOriginPositionIds] = useState<number[]>([]);
-  const [selectedPoint, setSelectedPoint] = useState(0);
+  // const [selectedPoint, setSelectedPoint] = useState(0);
 
   const { register, setValue, handleSubmit } = useForm<PositionFields>();
 
@@ -62,34 +67,36 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
     dispatch(fetchTransformations());
     dispatch(fetchOrganizationalUnitDto());
 
-
     if (mode === "edit" && id) {
       dispatch(fetchPositionById({ positionId: Number(id) }));
     }
-
   }, [id, mode, dispatch]);
 
   useEffect(() => {
-       console.log("EDICION CARGO ", position);
+    console.log("EDICION CARGO ", position);
     if (mode === "edit" && position) {
-
       setValue("id", position.id);
       setValue("pointId", position?.pointID?.id);
       setValue("pointsAvailable", position.pointID.amountPoint);
       setValue("organizationalId", position.organizationalUnitID.id);
       setValue("positionStatus", position?.positionStatus ?? "");
-      setValue("resolutionTransformationId", position?.creationResolutionID?.id);
+      setValue(
+        "resolutionTransformationId",
+        position?.creationResolutionID?.id
+      );
     }
-    
-   }, [mode, position, setValue])
+  }, [mode, position, setValue]);
 
-    const handleChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-     const { value } = event.target;
-     const pointSelect = points.find((p) => Number(p.id) === Number(value));
-     console.log("Valor de Puntos " + pointSelect?.amountPoint);
-     setValue('pointsAvailable', pointSelect?.amountPoint? pointSelect.amountPoint: 0);
-     //setSelectedPoint(pointSelect?.amountPoint? pointSelect.amountPoint: 0);
-   }; 
+  const handleChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = event.target;
+    const pointSelect = points.find((p) => Number(p.id) === Number(value));
+    console.log("Valor de Puntos " + pointSelect?.amountPoint);
+    setValue(
+      "pointsAvailable",
+      pointSelect?.amountPoint ? pointSelect.amountPoint : 0
+    );
+    //setSelectedPoint(pointSelect?.amountPoint? pointSelect.amountPoint: 0);
+  };
 
   const onSubmit = (data: PositionFields) => {
     const positionRequest: PositionRequestWithId = {
@@ -97,29 +104,41 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
       pointId: Number(data.pointId),
       organizationalId: Number(data.organizationalId),
       originPositionIds: originPositionIds,
-      positionStatus: data.positionStatus as (typeof StatusOfPosition)["ACTIVO" | "VACANTE_DEFINITIVA" | "VACANTE_TRANSITORIA" | "SUPRIMIDO"],
+      positionStatus: data.positionStatus as (typeof StatusOfPosition)[
+        | "ACTIVO"
+        | "VACANTE_DEFINITIVA"
+        | "VACANTE_TRANSITORIA"
+        | "SUPRIMIDO"],
       resolutionTransformationId: Number(data.resolutionTransformationId),
     };
     console.log("POSITION REQUEST: ", positionRequest);
     console.log("ORIGEN DE CARGO ", originPositionIds);
 
     if (mode === "create") {
-      swal.fire({
-          title: <small>'Estas seguro de esto?, Esta acción es irreversible'</small>,
+      swal
+        .fire({
+          title: (
+            <small>'Estas seguro de esto?, Esta acción es irreversible'</small>
+          ),
           showCancelButton: true,
-          confirmButtonText: "Sí",  
-      }).then(
-          async (result) => {
-            if(result.isConfirmed){
-                 dispatch(addPosition(positionRequest)).then(() => navigate("/cargos/all"));
-            }
+          confirmButtonText: "Sí",
+        })
+        .then(async (result) => {
+          if (result.isConfirmed) {
+            dispatch(addPosition(positionRequest)).then(() =>
+              navigate("/cargos/all")
+            );
           }
-      );
-    
+        });
     } else {
-      dispatch(updatePosition({ positionId: Number(id), position_request: positionRequest }));
+      dispatch(
+        updatePosition({
+          positionId: Number(id),
+          position_request: positionRequest,
+        })
+      );
       navigate("/cargos/all");
-    }   
+    }
   };
 
   return (
@@ -128,22 +147,24 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
         {mode === "create" ? "Nuevo Cargo" : "Editar Cargo"}
       </h5>
       <div className="p-6 space-y-6">
-        <form onSubmit={handleSubmit(onSubmit)} >
-
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-2 gap-3">
             {/* Oculto para edit */}
             {mode === "edit" && <input type="hidden" {...register("id")} />}
 
             <div>
               <Label htmlFor="resolutionTransformationId">Transformación</Label>
-              <Select {...register("resolutionTransformationId")} style={{ fontFamily: "monospace" }} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' >
+              <Select
+                {...register("resolutionTransformationId")}
+                style={{ fontFamily: "monospace" }}
+        
+              >
                 <option value="">Seleccionar</option>
                 {transformations.map((t) => (
                   <option key={t.id} value={t.id}>
-
                     {`${t.resolutionNumber?.toString().padEnd(10, " ")}|
                     ${t.date ? format(new Date(t.date), "dd-MM-yyyy") : ""}
-                   ` }
+                   `}
                   </option>
                 ))}
               </Select>
@@ -151,7 +172,11 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
 
             <div>
               <Label htmlFor="pointId">Tipo de Cargo</Label>
-              <Select {...register("pointId")} onChange={handleChangeSelect}  className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5'>
+              <Select
+                {...register("pointId")}
+                onChange={handleChangeSelect}
+        
+              >
                 <option value="">Seleccionar</option>
                 {points.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -163,12 +188,19 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
 
             <div>
               <Label htmlFor="amountPoint">Cantidad de Puntos</Label>
-              <Input {...register('pointsAvailable')}  className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' disabled />
+              <Input
+                {...register("pointsAvailable")}
+        
+                disabled
+              />
             </div>
 
             <div>
               <Label>Estado del Cargo</Label>
-              <Select {...register("positionStatus")} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5'>
+              <Select
+                {...register("positionStatus")}
+        
+              >
                 <option value="">Seleccionar</option>
                 {Object.entries(StatusOfPosition).map(([key, label]) => (
                   <option key={key} value={key}>
@@ -180,7 +212,10 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
 
             <div>
               <Label htmlFor="organizationalId">Unidad Org.</Label>
-              <Select {...register("organizationalId")} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5'>
+              <Select
+                {...register("organizationalId")}
+        
+              >
                 <option value="">Seleccionar</option>
                 {organizationalsDto.map((org) => (
                   <option key={org.id} value={org.id}>
@@ -190,8 +225,15 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
               </Select>
             </div>
           </div>
-          {mode !== "edit" ? (<TableOfPositions getSelectedPositions={setOriginPositionIds} shouldReset={false} onResetDone={() => { }} />
-          ) : (position && <OriginPositions originId={Number(id)} />)}
+          {mode !== "edit" ? (
+            <TableOfPositions
+              getSelectedPositions={setOriginPositionIds}
+              shouldReset={false}
+              onResetDone={() => {}}
+            />
+          ) : (
+            position && <OriginPositions originId={Number(id)} />
+          )}
 
           <div className="mt-10 flex justify-center">
             <button
@@ -203,8 +245,6 @@ export const Position = ({ mode }: { mode: "create" | "edit" }) => {
           </div>
         </form>
       </div>
-
     </div>
-
   );
-}
+};

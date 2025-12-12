@@ -68,16 +68,19 @@ export const OrganizationalUnitFC = ({ mode }: { mode: "edit" | "create" }) => {
   return (
     <div>
       <h5 className="p-2 mb-1 text-1xl font-bold text-gray-400 dark:text-white border border-gray-200 bg-[#cddafd] rounded-t-lg">
-        Crear Departamento Academico
+        Nuevo Departamento Academico
       </h5>
       <div className="p-6 space-y-6">
-        <form onSubmit={handleSubmit(organizationSubmit)} >
-
-          <div className="mb-4">
-            <Label htmlFor="nameUnit">Departamento academico</Label>
-            <Input {...register("nameUnit",{
-               required: 'El nombre de departamento es un dato obligatorio'
-            }) } className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+        <form onSubmit={handleSubmit(organizationSubmit)}>
+          <div className="grid grid-cols-3">
+            <div className="mb-4">
+              <Label htmlFor="nameUnit">Departamento academico</Label>
+              <Input
+                {...register("nameUnit", {
+                  required: "El nombre de departamento es un dato obligatorio",
+                })} className="py-1 outline-green-500"
+              />
+            </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-2">
@@ -87,12 +90,9 @@ export const OrganizationalUnitFC = ({ mode }: { mode: "edit" | "create" }) => {
                 control={control}
                 render={({ field: { onChange } }) => (
                   <div className="flex items-center space-x-2">
-
                     <AgentAutocomplete onSelect={(a) => onChange(a)} />
-
                   </div>
                 )}
-
               />
             </div>
             <h5 className="col-span-3">Información de Director</h5>
@@ -109,8 +109,6 @@ export const OrganizationalUnitFC = ({ mode }: { mode: "edit" | "create" }) => {
               <Label>Documento</Label>
               <span>{directorDetails?.document}</span>
             </div>
-
-
           </div>
 
           <div className="grid grid-cols-3 gap-4">
@@ -121,11 +119,8 @@ export const OrganizationalUnitFC = ({ mode }: { mode: "edit" | "create" }) => {
                 control={control}
                 render={({ field: { onChange } }) => (
                   <div className="flex items-center space-x-2">
-
                     <AgentAutocomplete onSelect={(a) => onChange(a)} />
-                    <div className="flex-1">
-
-                    </div>
+                    <div className="flex-1"></div>
                   </div>
                 )}
               />
@@ -144,16 +139,16 @@ export const OrganizationalUnitFC = ({ mode }: { mode: "edit" | "create" }) => {
               <Label>Documento</Label>
               <span>{viceDirectorDetails?.document}</span>
             </div>
-
-
           </div>
 
-
-
-          <Button type="submit" className="text-white bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Agregar</Button>
+          <Button
+            type="submit"
+            className="text-white bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          >
+            Agregar
+          </Button>
         </form>
       </div>
-
     </div>
-  )
+  );
 }

@@ -13,6 +13,7 @@ export const registerUser = createAsyncThunk("user/registerUser",
             toast.success("El usuario se registro con exito");
             return response.data;
         } catch (error) {
+            
 
             return rejectWithValue(String(error));
             

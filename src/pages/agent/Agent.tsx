@@ -206,7 +206,7 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
                             <Label htmlFor='firstname'>Nombre</Label>
                             <Input {...register('firstname', {
                                 required: "El nombre del agente es obligatorio"
-                            })} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                            })}  />
 
                             {errors.firstname && <p style={{ color: "red" }}>{errors.firstname.message}</p>
                             }
@@ -217,7 +217,7 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
                                 minLength: { value: 2, message: "El apellido debe tener al menos 2 caracteres" },
                                 required: "El apellido del agente es obligatorio",
 
-                            })} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                            })}  />
 
                             {errors.lastname && <p style={{ color: "red" }}>{errors.lastname.message}</p>}
                         </div>
@@ -227,7 +227,7 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
 
                             <div>
                                 <Label htmlFor='documenttype'  >Tipo Doc.</Label>
-                                <Select {...register('documenttype', { required: "El tipo de documento es obligatorio" })} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5'
+                                <Select {...register('documenttype', { required: "El tipo de documento es obligatorio" })} 
                                 >
                                     {
                                         DocumentType.map((doc, key) => (
@@ -243,7 +243,7 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
 
                             <div>
                                 <Label htmlFor='document'>Documento</Label>
-                                <Input {...register('document', { required: "El documento es un dato obligatorio" })} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                                <Input {...register('document', { required: "El documento es un dato obligatorio" })}  />
                                 {errors.document && <p style={{ color: "red" }}>{errors.document.message}</p>}
                             </div>
                             <div>
@@ -253,13 +253,13 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
                                     validate: { validateDate, validateDateNotAfterToday }
                                 })
 
-                                } className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                                } />
                                 {errors.birthdate && <p style={{ color: "red" }}>{errors.birthdate.message}</p>}
 
                             </div>
                             <div>
                                 <Label htmlFor='phone'>Celular</Label>
-                                <Input {...register('phone')} placeholder="0342-456-7890" className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                                <Input {...register('phone')} placeholder="0342-456-7890"  />
 
                             </div>
 
@@ -271,14 +271,14 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
 
                             <Input type='email' {...register('email', {
                                 validate: validateEmail
-                            })} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                            })}  />
 
                             {errors.email && <p style={{ color: 'red' }} >{errors.email.message}</p>}
                         </div>
 
                         <div className='col-span-6 sm:col-span-3'>
                             <Label htmlFor='address'>Domicilio</Label>
-                            <Input {...register('address')} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                            <Input {...register('address')}  />
 
                         </div>
 
@@ -286,7 +286,7 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
                             <Label>Numero de Legajo</Label>
 
 
-                            <Input {...register('file')} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                            <Input {...register('file')}  />
 
 
                         </div>
@@ -296,7 +296,7 @@ export default function Agent({ mode }: { mode: "create" | "edit" }) {
                             <Label htmlFor='leavingdate'>Fecha Salida</Label>
 
 
-                            <Input type='date' {...register('leavingdate')} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+                            <Input type='date' {...register('leavingdate')}  />
                             {errors.leavingdate && <p style={{ color: 'red' }}>{errors.leavingdate.message}</p>}
 
                         </div>

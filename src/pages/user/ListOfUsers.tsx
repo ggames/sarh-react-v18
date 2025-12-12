@@ -21,7 +21,7 @@ export function ListOfUsers() {
 
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-semibold text-gray-700">
-                    Información de Cargos
+                    Información de Usuarios
                 </h2>
 
                 <Link to={"/register"} className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 py-3 px-6 font-dm text-base font-medium text-white shadow-xl shadow-green-400/75 transition-transform duration-200 ease-in-out hover:scale-[1.02]"

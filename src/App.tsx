@@ -36,6 +36,7 @@ import { OrganizationalSubunit } from './pages/organizational-subunit/Organizati
 import { Point } from './pages/point/Point'
 import { RegisterForm } from './pages/user/RegisterForm'
 import { ListOfUsers } from './pages/user/ListOfUsers'
+import { ListOfTransformations } from './pages/transformation/ListOfTransformations'
 
 
 
@@ -48,46 +49,56 @@ function App() {
   return (
     <>
       <Routes>
-
         <Route path="/login" element={<Login />} />
 
-        <Route path="/" element={<Layout />} >
+        <Route path="/" element={<Layout />}>
           <Route path="unauthorized" element={<Unauthorized />} />
-          
-          <Route element={<RequireAuth allowedRoles={[Roles.ROLE_USER]} />} >
-          {/*   <Route path='cargos' element={<Position />} />  */}
-            <Route path='usuarios' element={<ListOfUsers/>} />
-            <Route path='register' element={<RegisterForm/>} />
-            <Route path='puntos' element={<Point />} />
-            <Route path='cargos/all' element={<ListPositions />} />
-            <Route path='agente/create' element={<Agent mode="create" />} />
-            <Route path='agente/edit/:id' element={<Agent mode="edit" />} />
-            <Route path='transformacion' element={<Transformation />} />
-            <Route path='plantas' element={<StaffingPlans/>} />
-            <Route path='planta/edit/:id' element={<PlantPositionUpdate/>} />
-            <Route path='planta/create' element={<PlantPositionCreate/>} />
-            <Route path='cargo/edit/:id' element={<Position mode={'edit'}/> } />
-            <Route path='cargo/create' element={<Position mode={'create'}/> } />
-            <Route path='agentes/all' element={<ListOfAgents2 />} />
-            <Route path='departamento' element={<TableOrganizationalUnit/>} />
-            <Route path='departamento/edit/:id' element={<OrganizationalUnitFC mode={"edit"}/>} />
-           
-            <Route path='departamento/create' element={<OrganizationalUnitFC mode={"create"}/>} />
-            <Route path='materias' element={<TableSubOrganizational/>} /> 
-            <Route path= 'materia/create' element= {<OrganizationalSubunit mode={'create'}/>} />
-            <Route path='materia/edit/:id' element={<OrganizationalSubunit mode={"edit"}/>} /> 
 
-            <Route path='reporte-plantas' element={<PlantReport />} />
-             <Route path='*' element={<PageNotFound/>} />
+          <Route element={<RequireAuth allowedRoles={[Roles.ROLE_USER]} />}>
+            {/*   <Route path='cargos' element={<Position />} />  */}
+            <Route path="usuarios" element={<ListOfUsers />} />
+            <Route path="register" element={<RegisterForm />} />
+            <Route path="puntos" element={<Point />} />
+            <Route path="cargos/all" element={<ListPositions />} />
+            <Route path="agente/create" element={<Agent mode="create" />} />
+            <Route path="agente/edit/:id" element={<Agent mode="edit" />} />
+            <Route path="transformacion" element={<Transformation />} />
+            <Route path="transformaciones" element={<ListOfTransformations />} />
+
+            <Route path="plantas" element={<StaffingPlans />} />
+            <Route path="planta/edit/:id" element={<PlantPositionUpdate />} />
+            <Route path="planta/create" element={<PlantPositionCreate />} />
+            <Route path="cargo/edit/:id" element={<Position mode={"edit"} />} />
+            <Route path="cargo/create" element={<Position mode={"create"} />} />
+            <Route path="agentes/all" element={<ListOfAgents2 />} />
+            <Route path="departamento" element={<TableOrganizationalUnit />} />
+            <Route
+              path="departamento/edit/:id"
+              element={<OrganizationalUnitFC mode={"edit"} />}
+            />
+
+            <Route
+              path="departamento/create"
+              element={<OrganizationalUnitFC mode={"create"} />}
+            />
+            <Route path="materias" element={<TableSubOrganizational />} />
+            <Route
+              path="materia/create"
+              element={<OrganizationalSubunit mode={"create"} />}
+            />
+            <Route
+              path="materia/edit/:id"
+              element={<OrganizationalSubunit mode={"edit"} />}
+            />
+
+            <Route path="reporte-plantas" element={<PlantReport />} />
+            <Route path="*" element={<PageNotFound />} />
           </Route>
         </Route>
-       
       </Routes>
-      <ToastContainer position='top-right' autoClose={3000} />
-
+      <ToastContainer position="top-right" autoClose={3000} />
     </>
-
-  )
+  );
 }
 
 export default App

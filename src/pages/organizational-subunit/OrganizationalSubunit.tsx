@@ -10,6 +10,9 @@ import { fetchOrganizationalUnit } from "../../features/organization/organizatio
 import { OrganizationalSubUnitWithId } from '../../models/organizationalSubUnit.d';
 import { toast } from "react-toastify";
 import { addSuborganizational, fetchSuborganizationalById, updateSuborganizational } from "../../features/suborganizational/suborganizationalThunk";
+import { FaSave } from "react-icons/fa";
+import { Select } from "../../components/ui/Select";
+import { LuRefreshCcw } from "react-icons/lu";
 
 export const OrganizationalSubunit = ({ mode }: { mode: "create" | "edit" }) => {
 
@@ -55,20 +58,20 @@ export const OrganizationalSubunit = ({ mode }: { mode: "create" | "edit" }) => 
       guaraniCode: data.guaraniCode,
       organizationalUnit: data.organizationalUnitId
     };
-    if (mode === "edit") {
+    if (mode === "create") {
       dispatch(addSuborganizational(subOrganizationalRequest)).unwrap().then(() => {
-        toast.success("Departamento Academico actualizado con exito");
+        toast.success("Departamento Academico creado con exito");
       }).catch(() => {
-        toast.error("Error al actualizar el Departamento Academico");
+        toast.error("Error al crear el Departamento Academico");
       });
     } else {
       dispatch(updateSuborganizational({
         suborganizational_id: Number(id),
         suborganizational: subOrganizationalRequest
       })).unwrap().then(() => {
-        toast.success("Departamento Academico creado con exito");
+        toast.success("Departamento Academico actualizar con exito");
       }).catch(() => {
-        toast.error("Error al crear el Departamento Academico");
+        toast.error("Error al actualizar el Departamento Academico");
       });
     }
   }
@@ -79,33 +82,47 @@ export const OrganizationalSubunit = ({ mode }: { mode: "create" | "edit" }) => 
         Crear Departamento Academico
       </h5>
       <div className="p-6 space-y-6">
-        <form onSubmit={handleSubmit(suborganizationSubmit)} >
-         <div className="grid grid-cols-2 gap-6">
-          <div className="mb-4">
-            <Label htmlFor="nameSubUnit">Materia</Label>
-            <Input {...register("nameSubUnit")} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
+        <form onSubmit={handleSubmit(suborganizationSubmit)}>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="nameSubUnit">Materia</Label>
+              <Input {...register("nameSubUnit")} />
+            </div>
+            <div>
+              <Label htmlFor="nameUnit">Cod. Guarani</Label>
+              <Input {...register("guaraniCode")} />
+            </div>
+            <div className="mb-4">
+              <Label htmlFor="organizationalUnitId">
+                Departamento Academico
+              </Label>
+              <Select {...register("organizationalUnitId",  { valueAsNumber: true })}>
+                {organizationals.map((org) => (
+                  <option key={org.id} value={org.id}>
+                    {org.nameUnit}
+                  </option>
+                ))}
+              </Select>
+            </div>
           </div>
-          <div className="mb-4">
-            <Label htmlFor="nameUnit">Cod. Guarani</Label>
-            <Input {...register("guaraniCode")} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' />
-          </div>
-          <div className="mb-4">
-            <Label htmlFor="organizationalUnitId">Departamento Academico</Label>
-            <select {...register("organizationalUnitId")} className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5' >
-              <option value={0}>Seleccione un departamento academico</option>
-              {organizationals.map((org) => (
-                <option key={org.id} value={org.id}>{org.nameUnit}</option>
-              ))}
-            </select>
-          </div>
-         </div>
-          
 
-          <Button type="submit" className="text-white bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Agregar</Button>
+          <Button
+            type="submit"
+            className="text-white bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg inline-flex text-sm px-5 py-2.5 items-center gap-2"
+          >
+            {mode === "create" ? (
+              <>
+                Agregar <FaSave />
+              </>
+            ) : (
+              <>
+                Actualizar <LuRefreshCcw />
+              </>
+            )}
+          </Button>
         </form>
       </div>
-
     </div>
-  )
+  );
 
 }
